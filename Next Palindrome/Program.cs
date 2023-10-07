@@ -13,13 +13,13 @@ https://www.reddit.com/r/dailyprogrammer/comments/n3var6/20210503_challenge_388_
 
 class NextPalindrome
 {
-    static int[] GetNumberArray(int number, int digits)
+    static int[] GetNumberArray(long number, int digits)
     {
         int[] numberArray = new int[digits];
         for (int i = 0; i < digits; ++i)
         {
-            int mask = (int)Math.Pow(10, digits-i-1);
-            int digit = number / mask;
+            long mask = (long)Math.Pow(10, digits-i-1);
+            int digit = (int)(number / mask);
             number -= mask * digit;
             numberArray[i] = digit;
         }
@@ -27,18 +27,18 @@ class NextPalindrome
         return numberArray;
     }
 
-    static int ReconstructNumber(int[] digits)
+    static long ReconstructNumber(int[] digits)
     {
-        int number = 0;
+        long number = 0;
         for (int i = 0; i < digits.Length; ++i)
         {
-            number += (int)Math.Pow(10, i) * digits[digits.Length-i-1];
+            number += (long)Math.Pow(10, i) * digits[digits.Length-i-1];
         }
 
         return number;
     }
 
-    static int NextPal(int number)
+    static long NextPal(long number)
     {
         // Going to try to solve this without strings
         // Immediately break out if the number is 10 or less
@@ -48,7 +48,7 @@ class NextPalindrome
         }
 
         // Increment the number so that we don't end up finding the same palindrome.
-        int nextPalindrome = number + 1;
+        long nextPalindrome = number + 1;
 
         // Determine how many digits we have
         int digits = (int)Math.Log10(nextPalindrome) + 1;
@@ -115,7 +115,7 @@ class NextPalindrome
         return nextPalindrome;
     }
 
-    static bool CheckPalindrome(int number)
+    static bool CheckPalindrome(long number)
     {
         // Don't care about using strings here, this isn't part of the challenge.
         string num = number.ToString();
@@ -154,7 +154,9 @@ class NextPalindrome
             }
         }
 
-        int nextPalindrome = (int)Math.Pow(3, 39); // NextPal(number);
+        // Test case - This passes
+        // long nextPalindrome = NextPal((long)Math.Pow(3, 39));
+        long nextPalindrome = NextPal(number);
         Console.WriteLine($"The next palindrome is {nextPalindrome}");
         if (CheckPalindrome(nextPalindrome))
         {
