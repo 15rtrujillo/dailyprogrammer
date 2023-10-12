@@ -13,6 +13,8 @@ Given a list of hex color strings, produce the hex color string you get from ave
 
 blend({"#000000", "#778899"}) => "#3C444C"
 blend({"#E6E6FA", "#FF69B4", "#B0C4DE"}) => "#DCB1D9"
+
+https://www.reddit.com/r/dailyprogrammer/comments/a0lhxx/20181126_challenge_369_easy_hex_colors/
 */
 
 using System.Text;
