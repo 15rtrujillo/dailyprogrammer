@@ -33,6 +33,49 @@ class HexColors
         hexLetters.Add(15, 'F');
     }
 
+    static int HexToInt(string hex)
+    {
+        int integer = 0;
+        int digits = hex.Length - 1;
+
+        for (int i = 0; i < digits; ++i)
+        {
+            char charDigit = hex[i + 1];
+            int digit;
+            if (charDigit >= '0' && charDigit <= '9')
+            {
+                digit = charDigit - '0';
+            }
+
+            else if (charDigit >= 'A' && charDigit <= 'F')
+            {
+                digit = hexLetters.First(pair => pair.Value == charDigit).Key;
+            }
+
+            else
+            {
+                throw new FormatException("Hexadecimal number is not formatted correctly");
+            }
+
+            int exponent = digits - i - 1;
+            int placeValueMask = (int)Math.Pow(digit, exponent);
+
+            integer += placeValueMask;
+        }
+
+        return integer;
+    }
+
+    static string Blend(string[] blendColors)
+    {
+        StringBuilder newColorBuilder = new StringBuilder("#");
+        for (int i = 1; i < blendColors.Length; i += 2)
+        {
+            
+        }
+        return "";
+    }
+
     static string IntToHex(int integer)
     {   
         string hex = "";
@@ -68,7 +111,8 @@ class HexColors
     static void Main(String[] args)
     {
         int[] rgb;
-        while (true) {
+        while (true)
+        {
             Console.Write("Please enter an RGB value.\nThis will be three whole numbers from 0-255 separated by commas: ");
             string? input = Console.ReadLine();
             if (input == null)
@@ -96,5 +140,33 @@ class HexColors
         }
 
         Console.WriteLine($"Your color is {HexColor(rgb)} in hexadecimal.");
+
+        // Can't be bothered to verify that they only contain A-F
+        string[] toBlend;
+        while (true)
+        {
+            Console.Write("Please enter two hex colors separated by commas.\nYour hex colors should have a # followed by 6 hexadecimal digits: ");
+            string? line = Console.ReadLine();
+            if (line == null)
+            {
+                continue;
+            }
+
+            string[] possibleColors = line.Split(",");
+
+            toBlend = (from value in (from possibleColor in possibleColors
+            where possibleColor.Trim().StartsWith("#") && possibleColor.Trim().Length == 7
+            select possibleColor.Trim().ToUpper())
+            select value).ToArray();
+
+            if (toBlend.Length == 2)
+            {
+                break;
+            }
+
+            Console.WriteLine("Please enter two hex colors separated by commas.");
+        }
+
+        Console.WriteLine($"Blending those two colors together results in {Blend(toBlend)}");
     }
 }
