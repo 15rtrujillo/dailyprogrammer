@@ -208,7 +208,7 @@ class LetterValueSum
         Console.WriteLine($"Letter Sum: {LetterSum(letters.ToLower())}");
 
         // For the bonuses, we first need to read in the file and sum all the words
-        ReadFile("enable1.txt");
+        ReadFile("..\\enable1.txt");
 
         /* 
         Bonus 1

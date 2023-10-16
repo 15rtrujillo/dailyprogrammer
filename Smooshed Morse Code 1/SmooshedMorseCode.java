@@ -28,7 +28,11 @@ protectorate is 12 letters long and encodes to .--..-.----.-.-.----.-..--., whic
 https://www.reddit.com/r/dailyprogrammer/comments/cmd1hb/20190805_challenge_380_easy_smooshed_morse_code_1/
 */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 class SmooshedMorseCode {
@@ -36,6 +40,7 @@ class SmooshedMorseCode {
     private final static String morse = ".- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --..";
 
     private final static HashMap<Character, String> morseCode = new HashMap<Character, String>();
+    private final static HashMap<String, String> codedWords = new HashMap<String, String>();
 
     static {
         char letter = 'a';
@@ -54,6 +59,89 @@ class SmooshedMorseCode {
         return morseBuilder.toString();
     }
 
+    private static void readFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            FileReader reader = new FileReader(file);
+            BufferedReader buffReader = new BufferedReader(reader);
+
+            String line = buffReader.readLine();
+            while (line != null) {
+                codedWords.put(line, sMorse(line));
+
+                line = buffReader.readLine();
+            }
+        } catch (Exception ex) {
+            System.out.println("Error reading from enable1.txt file.");
+            System.exit(-1);
+        }
+    }
+
+    private static String bonus1() {
+        /*
+        The sequence -...-....-.--. is the code for four different words (needing, nervate, niding, tiling). Find the only sequence that's the code for 13 different words.
+        */
+        HashMap<String, Integer> codeOccurrences = new HashMap<String, Integer>();
+
+        for (String sequence : codedWords.values()) {
+            if (codeOccurrences.containsKey(sequence)) {
+                codeOccurrences.put(sequence, codeOccurrences.get(sequence) + 1);
+            } else {
+                codeOccurrences.put(sequence, 1);
+            }
+        }
+
+        for (Entry<String, Integer> occurrence : codeOccurrences.entrySet()) {
+            if (occurrence.getValue() == 13) {
+                return occurrence.getKey();
+            }
+        }
+
+        return null;
+    }
+
+    private static String bonus2() {
+        /*
+        autotomous encodes to .-..--------------..-..., which has 14 dashes in a row. Find the only word that has 15 dashes in a row.
+        */
+
+        for (Entry<String, String> entry : codedWords.entrySet()) {
+            String sequence = entry.getValue();
+            // Skip codes that are too short
+            if (sequence.length() < 15) {
+                continue;
+            }
+
+            int longestDashCount = 0;
+            int currentDashCount = 0;
+            char[] sequenceChars = sequence.toCharArray();
+            for (int i = 0; i < sequence.length(); ++i) {
+                char c = sequenceChars[i];
+                // If we reach a . and there is less than 15 characters left, we know that this isn't the sequence
+                if (c == '.' && (sequence.length() - i) < 15) {
+                    break;
+                } else if (c == '.') {
+                    if (currentDashCount > longestDashCount) {
+                        longestDashCount = currentDashCount;
+                    }
+                    currentDashCount = 0;
+                } else if (c == '-') {
+                    ++currentDashCount;
+                }
+            }
+
+            if (currentDashCount > longestDashCount) {
+                longestDashCount = currentDashCount;
+            }
+
+            if (longestDashCount == 15) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -61,5 +149,13 @@ class SmooshedMorseCode {
         String word = scanner.nextLine();
 
         System.out.println("The morse code is: " + sMorse(word));
+
+        readFile("..\\enable1.txt");
+
+        System.out.println("\nBonus 1");
+        System.out.println(bonus1() + " is the only sequence that appears for 13 different words");
+
+        System.out.println("\nBonus 2");
+        System.out.println(bonus2() + " is the only word with a sequence that contains 15 dashes in a row.");
     }
 }
