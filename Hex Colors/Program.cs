@@ -11,7 +11,7 @@ hexcolor(0, 0, 205) => "#0000CD"  (MediumBlue)
 Optional bonus: color blending
 Given a list of hex color strings, produce the hex color string you get from averaging their RGB values together. You'll need to round channel values to integers.
 
-blend({"#000000", "#778899"}) => "#3C444C"
+blend({"#000000", "#778899"}) => "#3C444C" - Pretty sure this is a typo and the red should be 3B
 blend({"#E6E6FA", "#FF69B4", "#B0C4DE"}) => "#DCB1D9"
 
 https://www.reddit.com/r/dailyprogrammer/comments/a0lhxx/20181126_challenge_369_easy_hex_colors/
@@ -36,11 +36,11 @@ class HexColors
     static int HexToInt(string hex)
     {
         int integer = 0;
-        int digits = hex.Length - 1;
+        int digits = hex.Length;
 
         for (int i = 0; i < digits; ++i)
         {
-            char charDigit = hex[i + 1];
+            char charDigit = hex[i];
             int digit;
             if (charDigit >= '0' && charDigit <= '9')
             {
@@ -58,7 +58,7 @@ class HexColors
             }
 
             int exponent = digits - i - 1;
-            int placeValueMask = (int)Math.Pow(digit, exponent);
+            int placeValueMask = digit * (int)Math.Pow(16, exponent);
 
             integer += placeValueMask;
         }
@@ -69,11 +69,21 @@ class HexColors
     static string Blend(string[] blendColors)
     {
         StringBuilder newColorBuilder = new StringBuilder("#");
-        for (int i = 1; i < blendColors.Length; i += 2)
+
+        int hexLength = blendColors[0].Length;
+
+        for (int i = 1; i < hexLength; i += 2)
         {
-            
+            int sum = 0;
+            foreach (string color in blendColors)
+            {
+                sum += HexToInt(color.Substring(i, 2));
+            }
+            int average = sum / blendColors.Length;
+            newColorBuilder.Append(IntToHex(average).PadLeft(2, '0'));
         }
-        return "";
+
+        return newColorBuilder.ToString();
     }
 
     static string IntToHex(int integer)
@@ -145,7 +155,7 @@ class HexColors
         string[] toBlend;
         while (true)
         {
-            Console.Write("Please enter two hex colors separated by commas.\nYour hex colors should have a # followed by 6 hexadecimal digits: ");
+            Console.Write("Please enter multiple hex colors separated by commas to blend them.\nYour hex colors should have a # followed by 6 hexadecimal digits: ");
             string? line = Console.ReadLine();
             if (line == null)
             {
@@ -159,7 +169,7 @@ class HexColors
             select possibleColor.Trim().ToUpper())
             select value).ToArray();
 
-            if (toBlend.Length == 2)
+            if (toBlend.Length > 1)
             {
                 break;
             }
@@ -167,6 +177,6 @@ class HexColors
             Console.WriteLine("Please enter two hex colors separated by commas.");
         }
 
-        Console.WriteLine($"Blending those two colors together results in {Blend(toBlend)}");
+        Console.WriteLine($"Blending those {toBlend.Length} colors together results in {Blend(toBlend)}");
     }
 }
