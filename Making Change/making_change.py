@@ -18,7 +18,6 @@ def change(amount: int) -> int:
         cur = amount // denomination
         amount -= (cur * denomination)
         coins += cur
-        pass
 
     return coins
 
