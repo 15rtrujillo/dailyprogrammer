@@ -1,6 +1,11 @@
+#define MULTITHREADING true
+#define LONGEST_CODE 4
+
 #include <chrono>
 #include <fstream>
+#if MULTITHREADING
 #include <future>
+#endif
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -8,8 +13,6 @@
 
 #include "node.hpp"
 #include "error_node.hpp"
-
-#define LONGEST_CODE 4
 
 std::string morseCode =
 ".- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. "
@@ -114,7 +117,9 @@ int main() {
 
 	// Bonus
 	std::cout << "Bonus" << std::endl;
+#if MULTITHREADING
 	std::vector<std::future<std::unique_ptr<Node>>> futures;
+#endif
 	std::vector<std::unique_ptr<Node>> outputs;
 
 	std::ifstream inFileStream("smorse2_bonus.in");
@@ -124,14 +129,20 @@ int main() {
 
 	while (std::getline(inFileStream, line))
 	{
+#if MULTITHREADING
 		futures.push_back(std::async(consumeNextCode, line, 0, 0));
+#else
+		outputs.push_back(consumeNextCode(line, 0, 0));
+#endif
 	}
 
+#if MULTITHREADING
 	// Get the futures
 	for (int i = 0; i < futures.size(); ++i)
 	{
 		outputs.push_back(futures.at(i).get());
 	}
+#endif
 
 	auto stop = std::chrono::high_resolution_clock::now();
 
